@@ -11,6 +11,6 @@
     "require": {},
     "bin": [
         "wait-for-mysql",
-        "wait-for-postgres"
+        "wait-for-postgresql"
     ]
 }
