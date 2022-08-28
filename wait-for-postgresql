@@ -26,7 +26,7 @@ if [[ -v DATABASE_URL ]]; then
     #echo "  port:     $POSTGRES_PORT"
     #echo "  database: $POSTGRES_DATABASE"
 fi
-
+POSTGRES_HOST=${POSTGRES_HOST:-"localhost"}
 POSTGRES_PORT=${POSTGRES_PORT:-5432}
 echo -n "Waiting for Postgres ($POSTGRES_HOST:$POSTGRES_PORT) ..."
 while ! pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -q; do
