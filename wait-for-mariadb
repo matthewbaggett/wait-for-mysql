@@ -2,12 +2,12 @@
 MARIADB_HOST=${MARIADB_HOST:-"localhost"}
 MARIADB_PORT=${MARIADB_PORT:-3306}
 echo -n "Waiting for MariaDB..."
-while ! mysqladmin ping -h"$MARIADB_HOST" -P"$MARIADB_PORT" --silent; do
+while ! mysqladmin ping -h"$MARIADB_HOST" -P"$MARIADB_PORT" -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" --silent --protocol tcp; do
     sleep 1
     echo -n "."
 done
 sleep 1;
-while ! mysqladmin ping -h"$MARIADB_HOST" -P"$MARIADB_PORT" --silent; do
+while ! mysqladmin ping -h"$MARIADB_HOST" -P"$MARIADB_PORT" -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" --silent --protocol tcp; do
     sleep 1
     echo -n "."
 done
