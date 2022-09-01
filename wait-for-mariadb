@@ -1,0 +1,14 @@
+#!/bin/bash
+MARIADB_HOST=${MARIADB_HOST:-"localhost"}
+MARIADB_PORT=${MARIADB_PORT:-3306}
+echo -n "Waiting for MariaDB..."
+while ! mysqladmin ping -h"$MARIADB_HOST" -P"$MARIADB_PORT" --silent; do
+    sleep 1
+    echo -n "."
+done
+sleep 1;
+while ! mysqladmin ping -h"$MARIADB_HOST" -P"$MARIADB_PORT" --silent; do
+    sleep 1
+    echo -n "."
+done
+echo -e "\nConnected to MariaDB!"
