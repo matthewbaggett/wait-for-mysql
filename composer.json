@@ -10,6 +10,7 @@
     ],
     "require": {},
     "bin": [
+        "wait-for-mariadb",
         "wait-for-mysql",
         "wait-for-postgresql"
     ]
