@@ -1,40 +1,47 @@
 #!/bin/bash
-if [[ -v DATABASE_URL ]]; then
+set -e
+if [[ -v POSTGRES_DSN || -v POSTGRES_URL || -v PGSQL_DSN || -v PGSQL_URL || -v DATABASE_DSN || -v DATABASE_URL  ]]; then
+    # Prefer POSTGRES_DSN, then POSTGRES_URL, then PGSQL_DSN, then PGSQL_URL, then DATABASE_DSN, then DATABASE_URL
+    POSTGRES_DSN=${POSTGRES_DSN:-${POSTGRES_URL:-${PGSQL_DSN:-${PGSQL_URL:-${DATABASE_DSN:-$DATABASE_URL}}}}}
     # extract the protocol
-    proto="$(echo $DATABASE_URL | grep :// | sed -e's,^\(.*://\).*,\1,g')"
+    SCHEMA="$(echo "$POSTGRES_DSN" | grep "://" | sed -e's,^\(.*://\).*,\1,g')"
     # remove the protocol
-    url="$(echo ${DATABASE_URL/$proto/})"
+    URI=${POSTGRES_DSN//$SCHEMA/}
     # extract the user & password (if any)
-    userpass="$(echo $url | grep @ | cut -d@ -f1)"
+    CREDENTIALS="$(echo $URI | grep @ | cut -d@ -f1)"
     # extract the username
-    POSTGRES_USERNAME="$(echo $userpass | cut -d: -f1)"
-    POSTGRES_PASSWORD="$(echo $userpass | cut -d: -f2)"
+    # shellcheck disable=SC2034
+    POSTGRES_USERNAME="$(echo $CREDENTIALS | cut -d: -f1)"
+    # shellcheck disable=SC2034
+    POSTGRES_PASSWORD="$(echo "$CREDENTIALS" | cut -d: -f2)"
     # extract the host and port
-    hostport="$(echo ${url/$userpass@/} | cut -d/ -f1)"
+    URI_HOST_AND_PORT="$(echo "${URI/$CREDENTIALS@/}" | cut -d/ -f1)"
     # by request host without port
-    POSTGRES_HOST="$(echo $hostport | sed -e 's,:.*,,g')"
+    POSTGRES_HOST="$(echo "$URI_HOST_AND_PORT" | sed -e 's,:.*,,g')"
     # by request - try to extract the port
-    POSTGRES_PORT="$(echo $hostport | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')"
+    POSTGRES_PORT="$(echo "$URI_HOST_AND_PORT" | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')"
     # extract the path (if any)
-    POSTGRES_DATABASE="$(echo $url | grep / | cut -d/ -f2-)"
+    # shellcheck disable=SC2034
+    POSTGRES_DATABASE="$(echo $URI | grep / | cut -d/ -f2-)"
 
-    #echo "url: $url"
-    #echo "  protocol: $proto"
+    #echo "URI: $URI"
+    #echo "  protocol: $SCHEMA"
     #echo "  username: $POSTGRES_USERNAME"
     #echo "  password: $POSTGRES_PASSWORD"
     #echo "  hostname: $POSTGRES_HOST"
     #echo "  port:     $POSTGRES_PORT"
     #echo "  database: $POSTGRES_DATABASE"
 fi
-POSTGRES_HOST=${POSTGRES_HOST:-"localhost"}
-POSTGRES_PORT=${POSTGRES_PORT:-5432}
-echo -n "Waiting for Postgres ($POSTGRES_HOST:$POSTGRES_PORT) ..."
-while ! pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -q; do
+POSTGRES_HOST=${POSTGRES_HOST:-${POSTGRES_HOSTNAME:-${PGSQL_HOST:-${PGSQL_HOSTNAME:-"localhost"}}}}
+POSTGRES_PORT=${POSTGRES_PORT:-${MARIADB_PORT:-5432}}
+echo -n "Waiting for Postgres (postgres://${POSTGRES_HOST}:${POSTGRES_PORT}) ..."
+while ! pg_isready -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -q; do
     sleep 1
     echo -n "."
 done
 sleep 1;
-while ! pg_isready -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -q; do
+# Try again because sometimes theres a little hiccup..
+while ! pg_isready -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -q; do
     sleep 1
     echo -n "."
 done
