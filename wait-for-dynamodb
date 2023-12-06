@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo -e "\nWaiting for Dynamodb ($DYNAMODB_ENDPOINT) ..."
+
+while ! curl --silent --output /dev/null "{$DYNAMODB_ENDPOINT}/shell" ; do
+    sleep 1
+    echo -n "."
+done
+
+echo -e "\nConnected to Dynamodb!"

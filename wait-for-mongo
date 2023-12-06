@@ -1,0 +1,15 @@
+#!/bin/bash
+
+MONGODB_HOSTNAME=${MONGODB_HOSTNAME:-${MONGODB_HOST:-"localhost"}}
+MONGODB_PORT=${MONGODB_PORT:-27017}
+MONGODB_USERNAME=${MONGODB_USERNAME:-${MONGODB_USER}}
+MONGODB_PASSWORD=${MONGODB_PASSWORD:-${MONGODB_PASS}}
+MONGODB_DSN=${MONGODB_DSN:-${"mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOSTNAME}:${MONGODB_PORT}"}}
+echo -e "\nWaiting for MongoDB ..."
+
+while ! mongosh --eval 'db.runCommand("ping").ok' --quiet "${MONGODB_DSN}" > /dev/null 2>&1; do
+    sleep 1
+    echo -n "."
+done
+
+echo -e "\nConnected to MongoDB!"
