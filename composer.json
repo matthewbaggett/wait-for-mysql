@@ -10,7 +10,10 @@
     ],
     "require": {},
     "bin": [
+        "wait-for-dynamodb",
+        "wait-for-mongo",
         "wait-for-mysql",
-        "wait-for-postgresql"
+        "wait-for-postgresql",
+        "wait-for-redis"
     ]
 }
