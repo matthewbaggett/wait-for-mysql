@@ -1,0 +1,64 @@
+version: "3"
+services:
+  test:
+    build: .
+    environment:
+      REDIS_HOST: redis
+      REDIS_PASSWORD: &redis-password WswfZnMV8vO1x6g
+
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: &mysql-username wait-for-user
+      MYSQL_PASSWORD: &mysql-password Iykv4Qj7QcMgZ0F
+      MYSQL_DATABASE: &mysql-database wait-for-database
+
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: &postgres-username wait-for-postgres
+      POSTGRES_PASSWORD: &postgres-password 4hgpw3oaYgnQO1H
+      POSTGRES_DATABASE: &postgres-database wait-for-postgres
+
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_USERNAME: &mongo-username wait-for-mongo
+      MONGODB_PASSWORD: &mongo-password WdZ1Z0IGLralldB
+      MONGODB_DATABASE: &mongo-database wait-for-mongo
+
+      DYNAMODB_ENDPOINT: http://dynamodb:8000
+    depends_on:
+      - redis
+      - mongodb
+      - dynamodb
+      - mysql
+      - postgres
+
+  mysql:
+    image: mariadb:10.7
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+      MARIADB_USER: *mysql-username
+      MARIADB_PASSWORD: *mysql-password
+      MARIADB_DATABASE: *mysql-database
+
+  redis:
+    image: redis:7
+    command: [ "redis-server", "--requirepass", *redis-password, "--save", "60", "1", "--loglevel", "warning" ]
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: *postgres-username
+      POSTGRES_PASSWORD: *postgres-password
+      POSTGRES_DB: *postgres-database
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: [ "-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/tmp" ]
+
+  mongodb:
+    image: mongo:7.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: *mongo-username
+      MONGO_INITDB_ROOT_PASSWORD: *mongo-password
+      MONGO_INITDB_DATABASE: *mongo-database
+

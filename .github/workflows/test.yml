@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+  workflow_dispatch:
+
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        waiter:
+          - wait-for-dynamodb
+          - wait-for-mongo
+          - wait-for-mysql
+          - wait-for-postgresql
+          - wait-for-redis
+    steps:
+      - run: docker compose -p wait_for_db_${{ github.run_id }}_${{ matrix.waiter }} build
+      - run: docker compose -p wait_for_db_${{ github.run_id }}_${{ matrix.waiter }} run --rm test ${{ matrix.waiter }}
