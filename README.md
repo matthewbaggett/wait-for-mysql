@@ -1,7 +1,9 @@
-# wait-for-mysql & wait-for-postgres
+# wait-for-(mysql|postgres|mongodb|redis|dynamodb)
 Package that provides a shell script to wait for mysql/mariadb and postgres to be ready. 
 
 Does not actually contain any PHP.
+
+[![Test](https://github.com/matthewbaggett/wait-for-mysql/actions/workflows/test.yml/badge.svg)](https://github.com/matthewbaggett/wait-for-mysql/actions/workflows/test.yml)
 
 ## Usage
 ```bash
