@@ -2,17 +2,17 @@
 REDIS_HOST=${REDIS_HOST:-${REDIS_HOSTNAME:-"redis"}}
 REDIS_PORT=${REDIS_PORT:-6379}
 
-echo -e "Waiting for Redis ($REDIS_HOST:$REDIS_PORT) ..."
+echo -e "Waiting for Redis (${REDIS_HOST}:${REDIS_PORT}) ..."
 
-if [ -z "$REDIS_PASSWORD" ]; then
-    PASSWORD_ARG=""
+if [[ -z ${REDIS_PASSWORD} ]]; then
+	PASSWORD_ARG=""
 else
-    PASSWORD_ARG="--pass $REDIS_PASSWORD"
+	PASSWORD_ARG="--pass ${REDIS_PASSWORD}"
 fi
 # shellcheck disable=SC2086
-while ! redis-cli -h $REDIS_HOST -p $REDIS_PORT $PASSWORD_ARG -n 15 --no-auth-warning --raw incr ping > /dev/null ; do
-    sleep 1;
-    echo -n "."
+while ! redis-cli -h ${REDIS_HOST} -p ${REDIS_PORT} ${PASSWORD_ARG} -n 15 --no-auth-warning --raw incr ping >/dev/null; do
+	sleep 1
+	echo -n "."
 done
 
 echo -e "\n > Connected to Redis!"

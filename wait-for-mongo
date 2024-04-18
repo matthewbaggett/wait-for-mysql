@@ -7,9 +7,9 @@ MONGODB_PASSWORD=${MONGODB_PASSWORD:-${MONGODB_PASS}}
 MONGODB_DSN=${MONGODB_DSN:-"mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOSTNAME}:${MONGODB_PORT}"}
 echo -e "\nWaiting for MongoDB (mongodb://${MONGODB_HOSTNAME}:${MONGODB_PORT}) ..."
 
-while ! mongosh --eval 'db.runCommand("ping").ok' --quiet "${MONGODB_DSN}" > /dev/null 2>&1; do
-    sleep 1
-    echo -n "."
+while ! mongosh --eval 'db.runCommand("ping").ok' --quiet "${MONGODB_DSN}" >/dev/null 2>&1; do
+	sleep 1
+	echo -n "."
 done
 
 echo -e "\n > Connected to MongoDB!"

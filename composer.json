@@ -1,19 +1,19 @@
 {
-    "name": "matthewbaggett/wait-for-mysql",
-    "type": "library",
-    "license": "GPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "Matthew Baggett",
-            "email": "matthew@baggett.me"
-        }
-    ],
-    "require": {},
-    "bin": [
-        "wait-for-dynamodb",
-        "wait-for-mongo",
-        "wait-for-mysql",
-        "wait-for-postgresql",
-        "wait-for-redis"
-    ]
+  "name": "matthewbaggett/wait-for-mysql",
+  "type": "library",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Matthew Baggett",
+      "email": "matthew@baggett.me"
+    }
+  ],
+  "require": {},
+  "bin": [
+    "wait-for-dynamodb",
+    "wait-for-mongo",
+    "wait-for-mysql",
+    "wait-for-postgresql",
+    "wait-for-redis"
+  ]
 }

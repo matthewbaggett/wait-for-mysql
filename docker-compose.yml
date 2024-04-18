@@ -4,24 +4,24 @@ services:
     build: .
     environment:
       REDIS_HOST: redis
-      REDIS_PASSWORD: &redis-password WswfZnMV8vO1x6g
+      REDIS_PASSWORD: &redis-password password
 
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: &mysql-username wait-for-user
-      MYSQL_PASSWORD: &mysql-password Iykv4Qj7QcMgZ0F
+      MYSQL_PASSWORD: &mysql-password password
       MYSQL_DATABASE: &mysql-database wait-for-database
 
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USERNAME: &postgres-username wait-for-postgres
-      POSTGRES_PASSWORD: &postgres-password 4hgpw3oaYgnQO1H
+      POSTGRES_PASSWORD: &postgres-password password
       POSTGRES_DATABASE: &postgres-database wait-for-postgres
 
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
       MONGODB_USERNAME: &mongo-username wait-for-mongo
-      MONGODB_PASSWORD: &mongo-password WdZ1Z0IGLralldB
+      MONGODB_PASSWORD: &mongo-password password
       MONGODB_DATABASE: &mongo-database wait-for-mongo
 
       DYNAMODB_ENDPOINT: http://dynamodb:8000
@@ -42,7 +42,17 @@ services:
 
   redis:
     image: redis:7
-    command: [ "redis-server", "--requirepass", *redis-password, "--save", "60", "1", "--loglevel", "warning" ]
+    command:
+      [
+        "redis-server",
+        "--requirepass",
+        *redis-password,
+        "--save",
+        "60",
+        "1",
+        "--loglevel",
+        "warning",
+      ]
 
   postgres:
     image: postgres
@@ -53,7 +63,7 @@ services:
 
   dynamodb:
     image: amazon/dynamodb-local
-    command: [ "-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/tmp" ]
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/tmp"]
 
   mongodb:
     image: mongo:7.0
@@ -61,4 +71,3 @@ services:
       MONGO_INITDB_ROOT_USERNAME: *mongo-username
       MONGO_INITDB_ROOT_PASSWORD: *mongo-password
       MONGO_INITDB_DATABASE: *mongo-database
-

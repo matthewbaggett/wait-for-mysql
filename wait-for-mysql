@@ -1,47 +1,48 @@
 #!/bin/bash
 set -e
-if [[ -v MYSQL_DSN || -v MYSQL_URL || -v DATABASE_DSN || -v DATABASE_URL  ]]; then
-     # Prefer MYSQL_DSN, then MYSQL_URL, then DATABASE_DSN, then MYSQL_URL
-    MYSQL_DSN=${MYSQL_DSN:-${MYSQL_URL:-${DATABASE_DSN:-$MYSQL_URL}}}
-    # extract the protocol
-    SCHEMA="$(echo "$MYSQL_DSN" | grep "://" | sed -e's,^\(.*://\).*,\1,g')"
-    # remove the protocol
-    URI=${MYSQL_DSN//$SCHEMA/}
-    # extract the user & password (if any)
-    CREDENTIALS="$(echo $URI | grep @ | cut -d@ -f1)"
-    # extract the username
-    # shellcheck disable=SC2034
-    MYSQL_USERNAME="$(echo $CREDENTIALS | cut -d: -f1)"
-    # shellcheck disable=SC2034
-    MYSQL_PASSWORD="$(echo "$CREDENTIALS" | cut -d: -f2)"
-    # extract the host and port
-    URI_HOST_AND_PORT="$(echo "${URI/$CREDENTIALS@/}" | cut -d/ -f1)"
-    # by request host without port
-    MYSQL_HOST="$(echo "$URI_HOST_AND_PORT" | sed -e 's,:.*,,g')"
-    # by request - try to extract the port
-    MYSQL_PORT="$(echo "$URI_HOST_AND_PORT" | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')"
-    # extract the path (if any)
-    # shellcheck disable=SC2034
-    MYSQL_DATABASE="$(echo $URI | grep / | cut -d/ -f2-)"
+if [[ -v MYSQL_DSN || -v MYSQL_URL || -v DATABASE_DSN || -v DATABASE_URL ]]; then
+	# Prefer MYSQL_DSN, then MYSQL_URL, then DATABASE_DSN, then MYSQL_URL
+	MYSQL_DSN=${MYSQL_DSN:-${MYSQL_URL:-${DATABASE_DSN:-${MYSQL_URL}}}}
+	# extract the protocol
+	SCHEMA="$(echo "${MYSQL_DSN}" | grep "://" | sed -e's,^\(.*://\).*,\1,g')"
+	# remove the protocol
+	URI=${MYSQL_DSN//${SCHEMA}/}
+	# extract the user & password (if any)
+	CREDENTIALS="$(echo "${URI}" | grep @ | cut -d@ -f1)"
+	# extract the username
+	# shellcheck disable=SC2034
+	MYSQL_USERNAME="$(echo "${CREDENTIALS}" | cut -d: -f1)"
+	# shellcheck disable=SC2034
+	MYSQL_PASSWORD="$(echo "${CREDENTIALS}" | cut -d: -f2)"
+	# extract the host and port
+	URI_HOST_AND_PORT="$(echo "${URI/${CREDENTIALS}@/}" | cut -d/ -f1)"
+	# by request host without port
+	# shellcheck disable=SC2001
+	MYSQL_HOST="$(echo "${URI_HOST_AND_PORT}" | sed -e 's,:.*,,g')"
+	# by request - try to extract the port
+	MYSQL_PORT="$(echo "${URI_HOST_AND_PORT}" | sed -e 's,^.*:,:,g' -e 's,.*:\([0-9]*\).*,\1,g' -e 's,[^0-9],,g')"
+	# extract the path (if any)
+	# shellcheck disable=SC2034
+	MYSQL_DATABASE="$(echo "${URI}" | grep / | cut -d/ -f2-)"
 
-    #echo "URI: $URI"
-    #echo "  protocol: $SCHEMA"
-    #echo "  username: $MYSQL_USERNAME"
-    #echo "  password: $MYSQL_PASSWORD"
-    #echo "  hostname: $MYSQL_HOST"
-    #echo "  port:     $MYSQL_PORT"
-    #echo "  database: $MYSQL_DATABASE"
+	#echo "URI: $URI"
+	#echo "  protocol: $SCHEMA"
+	#echo "  username: $MYSQL_USERNAME"
+	#echo "  password: $MYSQL_PASSWORD"
+	#echo "  hostname: $MYSQL_HOST"
+	#echo "  port:     $MYSQL_PORT"
+	#echo "  database: $MYSQL_DATABASE"
 fi
 MYSQL_HOST=${MYSQL_HOST:-${MYSQL_HOSTNAME:-${MARIADB_HOST:-${MARIADB_HOSTNAME:-"localhost"}}}}
 MYSQL_PORT=${MYSQL_PORT:-${MARIADB_PORT:-3306}}
 echo -n "Waiting for MySQL... (mysql://${MYSQL_HOST}:${MYSQL_PORT})"
-while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" --silent; do
-    sleep 1
-    echo -n "."
+while ! mysqladmin ping -h"${MYSQL_HOST}" -P"${MYSQL_PORT}" --silent; do
+	sleep 1
+	echo -n "."
 done
-sleep 1;
-while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" --silent; do
-    sleep 1
-    echo -n "."
+sleep 1
+while ! mysqladmin ping -h"${MYSQL_HOST}" -P"${MYSQL_PORT}" --silent; do
+	sleep 1
+	echo -n "."
 done
 echo -e "\n > Connected to MySQL!"
