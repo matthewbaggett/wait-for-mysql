@@ -44,4 +44,4 @@ while ! mysqladmin ping -h"$MYSQL_HOST" -P"$MYSQL_PORT" --silent; do
     sleep 1
     echo -n "."
 done
-echo -e "\nConnected to MySQL!"
+echo -e "\n > Connected to MySQL!"

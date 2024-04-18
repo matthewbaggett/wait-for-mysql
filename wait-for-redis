@@ -15,4 +15,4 @@ while ! redis-cli -h $REDIS_HOST -p $REDIS_PORT $PASSWORD_ARG -n 15 --no-auth-wa
     echo -n "."
 done
 
-echo -e "Connected to Redis!"
+echo -e "\n > Connected to Redis!"

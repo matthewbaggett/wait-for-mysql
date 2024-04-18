@@ -45,4 +45,4 @@ while ! pg_isready -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -q; do
     sleep 1
     echo -n "."
 done
-echo -e "\nConnected to Postgres!"
+echo -e "\n > Connected to Postgres!"

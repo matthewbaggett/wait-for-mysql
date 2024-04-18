@@ -7,4 +7,4 @@ while ! curl --silent --output /dev/null "{$DYNAMODB_ENDPOINT}/shell" ; do
     echo -n "."
 done
 
-echo -e "\nConnected to Dynamodb!"
+echo -e "\n > Connected to Dynamodb!"
